@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - Gemini Asisten AI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #131314;
+            --bg-card: #1e1f20;
+            --bg-input: #282a2d;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary: #34d399; /* Emerald Green */
+            --secondary: #06b6d4; /* Electric Teal */
+            --text-main: #e3e3e3;
+            --text-muted: #8e918f;
+            --font-title: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Subtle animated background gradients */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(52, 211, 153, 0.15) 0%, rgba(0,0,0,0) 70%);
+            top: -50px;
+            left: -50px;
+            z-index: 0;
+            filter: blur(40px);
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, rgba(0,0,0,0) 70%);
+            bottom: -100px;
+            right: -100px;
+            z-index: 0;
+            filter: blur(50px);
+            pointer-events: none;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem 2rem;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: var(--font-title);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-spark {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+        }
+
+        .auth-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .auth-form-wrapper {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .auth-forms {
+            display: flex;
+            width: 200%;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .auth-form-card {
+            width: 50%;
+            padding: 0.2rem;
+            flex-shrink: 0;
+        }
+
+        .input-group {
+            margin-bottom: 1.25rem;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 16px 14px 46px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .input-wrapper input:focus + i {
+            color: var(--primary);
+        }
+
+        .alert-banner {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-banner.error {
+            display: flex;
+            background-color: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        .alert-banner.success {
+            display: flex;
+            background-color: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 14px;
+            color: #131314;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .auth-btn:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.2);
+        }
+
+        .auth-btn:active {
+            transform: translateY(1px);
+        }
+
+        .auth-btn i {
+            font-size: 0.9rem;
+        }
+
+        .auth-btn:disabled {
+            background: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .auth-toggle {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .auth-toggle span {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .auth-toggle span:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(19, 19, 20, 0.2);
+            border-top: 2px solid #131314;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="brand">
+                <i class="fa-solid fa-circle-nodes brand-spark"></i>
+                <span>Jartel Asisten AI</span>
+            </div>
+            <div class="auth-subtitle" id="auth-subtitle-text">Silakan masuk untuk mengakses asisten AI Anda</div>
+        </div>
+
+        <!-- Alert Banner -->
+        <div id="alert-box" class="alert-banner">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span id="alert-message"></span>
+        </div>
+
+        <div class="auth-form-wrapper">
+            <div class="auth-forms" id="forms-slider">
+                
+                <!-- LOGIN FORM -->
+                <div class="auth-form-card">
+                    <form id="login-form">
+                        <div class="input-group">
+                            <label for="login-username">Username</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="login-username" placeholder="Masukkan username" required autocomplete="username">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="login-password">Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="login-password" placeholder="Masukkan password" required autocomplete="current-password">
+                                <i class="fa-solid fa-lock"></i>
+                            </div>
+                        </div>
+                        <button type="submit" class="auth-btn" id="login-submit-btn">
+                            <span>Masuk</span>
+                            <div class="spinner" id="login-spinner"></div>
+                            <i class="fa-solid fa-arrow-right-to-bracket" id="login-btn-icon"></i>
+                        </button>
+                    </form>
+                    
+                    <div class="auth-toggle">
+                        Belum punya akun? <span onclick="toggleAuth(true)">Daftar Sekarang</span>
+                    </div>
+                </div>
+
+                <!-- REGISTER FORM -->
+                <div class="auth-form-card">
+                    <form id="register-form">
+                        <div class="input-group">
+                            <label for="reg-username">Username</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="reg-username" placeholder="Buat username (huruf/angka)" required autocomplete="username">
+                                <i class="fa-solid fa-user-plus"></i>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="reg-password">Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="reg-password" placeholder="Buat password minimal 4 karakter" required autocomplete="new-password">
+                                <i class="fa-solid fa-lock"></i>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="reg-password-confirm">Konfirmasi Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="reg-password-confirm" placeholder="Ulangi password" required autocomplete="new-password">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                        </div>
+                        <button type="submit" class="auth-btn" id="register-submit-btn">
+                            <span>Daftar Akun</span>
+                            <div class="spinner" id="register-spinner"></div>
+                            <i class="fa-solid fa-user-check" id="register-btn-icon"></i>
+                        </button>
+                    </form>
+                    
+                    <div class="auth-toggle">
+                        Sudah punya akun? <span onclick="toggleAuth(false)">Masuk di sini</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const slider = document.getElementById('forms-slider');
+        const subtitle = document.getElementById('auth-subtitle-text');
+        const alertBox = document.getElementById('alert-box');
+        const alertMsg = document.getElementById('alert-message');
+
+        function toggleAuth(showRegister) {
+            hideAlert();
+            if (showRegister) {
+                slider.style.transform = 'translateX(-50%)';
+                subtitle.innerText = 'Daftar akun baru untuk mulai berdiskusi';
+                document.title = 'Daftar - Gemini Asisten AI';
+            } else {
+                slider.style.transform = 'translateX(0%)';
+                subtitle.innerText = 'Silakan masuk untuk mengakses asisten AI Anda';
+                document.title = 'Masuk - Gemini Asisten AI';
+            }
+        }
+
+        function showAlert(msg, type = 'error') {
+            alertMsg.innerText = msg;
+            alertBox.className = 'alert-banner ' + type;
+            if (type === 'error') {
+                alertBox.querySelector('i').className = 'fa-solid fa-circle-exclamation';
+            } else {
+                alertBox.querySelector('i').className = 'fa-solid fa-circle-check';
+            }
+        }
+
+        function hideAlert() {
+            alertBox.className = 'alert-banner';
+        }
+
+        // Login Handler
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert();
+            
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const btn = document.getElementById('login-submit-btn');
+            const spinner = document.getElementById('login-spinner');
+            const icon = document.getElementById('login-btn-icon');
+
+            btn.disabled = true;
+            spinner.style.display = 'block';
+            icon.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('Login berhasil! Mengalihkan...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                } else {
+                    showAlert(data.detail || 'Username atau password salah.');
+                    btn.disabled = false;
+                    spinner.style.display = 'none';
+                    icon.style.display = 'block';
+                }
+            } catch (err) {
+                showAlert('Gagal menghubungi server. Periksa koneksi Anda.');
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                icon.style.display = 'block';
+            }
+        });
+
+        // Register Handler
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert();
+            
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-password-confirm').value;
+            const btn = document.getElementById('register-submit-btn');
+            const spinner = document.getElementById('register-spinner');
+            const icon = document.getElementById('register-btn-icon');
+
+            if (password !== confirmPassword) {
+                showAlert('Konfirmasi password tidak cocok.');
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                icon.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 4) {
+                showAlert('Password minimal harus memiliki 4 karakter.');
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                icon.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            spinner.style.display = 'block';
+            icon.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/v1/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('Pendaftaran sukses! Silakan masuk.', 'success');
+                    setTimeout(() => {
+                        toggleAuth(false);
+                        // Isikan username ke login
+                        document.getElementById('login-username').value = username;
+                        document.getElementById('login-password').value = '';
+                        btn.disabled = false;
+                        spinner.style.display = 'none';
+                        icon.style.display = 'block';
+                    }, 1500);
+                } else {
+                    showAlert(data.detail || 'Pendaftaran gagal.');
+                    btn.disabled = false;
+                    spinner.style.display = 'none';
+                    icon.style.display = 'block';
+                }
+            } catch (err) {
+                showAlert('Gagal menghubungi server. Periksa koneksi Anda.');
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                icon.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
